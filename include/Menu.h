@@ -1,11 +1,13 @@
 #ifndef MENU_H
 #define MENU_H
 
-#include <string>
+#include <bits/stdc++.h>
+
+using namespace std;
 
 class Menu {
 public:
-  static void run(const std::string &filename);
+  static void run(const string &filename);
 };
 
 #endif
