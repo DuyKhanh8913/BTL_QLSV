@@ -7,10 +7,40 @@ using namespace std;
 vector<Student> DataManager::loadData(const string &filename) {
   vector<Student> students;
   ifstream file(filename);
-  string line;
-  while (getline(file, line)) {
-    students.push_back(Student::deserialize(line));
+
+  if (!file.is_open()) {
+    cerr << "Error: Could not open file '" << filename << "'\n";
+    return students;
   }
+
+  string line;
+  int lineNum = 0;
+  while (getline(file, line)) {
+    lineNum++;
+    line = Utils::trim(line);
+
+    if (line.empty()) {
+      continue;
+    }
+
+    int pipeCount = count(line.begin(), line.end(), '|');
+    if (pipeCount < 2) {
+      cerr << "Warning: Skipping invalid line " << lineNum << ": " << line
+           << "\n";
+      continue;
+    }
+
+    Student s = Student::deserialize(line);
+
+    if (s.getId().empty() || Utils::trim(s.getId()).empty()) {
+      cerr << "Warning: Skipping student with empty ID at line " << lineNum
+           << "\n";
+      continue;
+    }
+
+    students.push_back(s);
+  }
+
   return students;
 }
 
