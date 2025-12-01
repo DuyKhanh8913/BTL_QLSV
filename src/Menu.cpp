@@ -10,7 +10,7 @@ void Menu::run(const string &filename) {
 
   do {
     system("cls");
-    cout << "\n===== MENU =====\n";
+    cout << "\n===== Student Manager MENU =====\n";
     cout << "1. Add student\n";
     cout << "2. Find student by ID\n";
     cout << "3. Update student\n";
@@ -18,7 +18,6 @@ void Menu::run(const string &filename) {
     cout << "0. Exit\n";
     cout << "Choose: ";
     cin >> choice;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
     switch (choice) {
     case 1:
