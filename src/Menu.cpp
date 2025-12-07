@@ -12,9 +12,10 @@ void Menu::run(const string &filename) {
     system("cls");
     cout << "\n===== Student Manager MENU =====\n";
     cout << "1. Add student\n";
-    cout << "2. Find student by ID\n";
-    cout << "3. Update student\n";
-    cout << "4. Display all students\n";
+    cout << "2. Remove student\n";
+    cout << "3. Find student by ID\n";
+    cout << "4. Update student\n";
+    cout << "5. Display all students\n";
     cout << "0. Exit\n";
     cout << "Choose: ";
     cin >> choice;
@@ -24,12 +25,15 @@ void Menu::run(const string &filename) {
       DataManager::addStudent(filename);
       break;
     case 2:
-      DataManager::findStudent(filename);
+      DataManager::removeStudent(filename);
       break;
     case 3:
-      DataManager::updateStudent(filename);
+      DataManager::findStudent(filename);
       break;
     case 4:
+      DataManager::updateStudent(filename);
+      break;
+    case 5:
       DataManager::displayAllStudents(filename);
       break;
     case 0:
