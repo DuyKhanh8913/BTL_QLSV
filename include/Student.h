@@ -14,7 +14,7 @@ public:
   Student() {}
   Student(string id, string studentName, string className);
 
-  void input();
+  void inputAdd();
   void inputUpdate();
   void display() const;
 
