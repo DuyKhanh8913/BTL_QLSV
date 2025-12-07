@@ -1,25 +1,30 @@
 #ifndef STUDENT_H
 #define STUDENT_H
 
-#include <string>
+#include "Person.h"
+#include <bits/stdc++.h>
 using namespace std;
 
-class Student {
+// Student extend from Person
+class Student : public Person {
 private:
-  string id;
-  string studentName;
   string className;
 
 public:
-  Student() {}
-  Student(string id, string studentName, string className);
+  Student() : Person() {}
+  Student(string id, string name, string className)
+      : Person(id, name), className(className) {}
 
-  void inputAdd();
-  void inputUpdate();
-  void display() const;
+  // Override virtual functions from Person
+  void inputAdd() override;
+  void inputUpdate() override;
+  void display() const override;
+  string serialize() const override;
+  string getType() const override { return "Student"; }
 
-  string getId() const;
-  string serialize() const;
+  string getClassName() const { return className; }
+  void setClassName(const string &newClass) { className = newClass; }
+
   static Student deserialize(const string &line);
 };
 

@@ -4,13 +4,13 @@
 
 using namespace std;
 
-vector<Student> DataManager::loadData(const string &filename) {
-  vector<Student> students;
+vector<shared_ptr<Person>> DataManager::loadData(const string &filename) {
+  vector<shared_ptr<Person>> persons;
   ifstream file(filename);
 
   if (!file.is_open()) {
     cerr << "Error: Could not open file '" << filename << "'\n";
-    return students;
+    return persons;
   }
 
   string line;
@@ -23,92 +23,124 @@ vector<Student> DataManager::loadData(const string &filename) {
       continue;
     }
 
-    int pipeCount = count(line.begin(), line.end(), '|');
-    if (pipeCount < 2) {
-      cerr << "Warning: Skipping invalid line " << lineNum << ": " << line
-           << "\n";
-      continue;
-    }
+    stringstream ss(line);
+    string type;
+    getline(ss, type, '|');
 
     Student s = Student::deserialize(line);
-
-    if (s.getId().empty() || Utils::trim(s.getId()).empty()) {
-      cerr << "Warning: Skipping student with empty ID at line " << lineNum
-           << "\n";
-      continue;
+    if (!s.getId().empty()) {
+      persons.push_back(make_shared<Student>(s));
     }
-
-    students.push_back(s);
   }
 
-  return students;
+  return persons;
 }
 
-void DataManager::saveData(const vector<Student> &students,
+void DataManager::saveData(const vector<shared_ptr<Person>> &persons,
                            const string &filename) {
-  ofstream file(filename, ios::out | ios::binary);
-  for (const auto &s : students) {
-    file << s.serialize() << endl;
+  ofstream file(filename, ios::out);
+  for (const auto &p : persons) {
+    file << p->serialize() << endl;
   }
 }
 
-void DataManager::addStudent(const string &filename) {
-  vector<Student> students = loadData(filename);
-  Student s;
+void DataManager::addPerson(const string &filename) {
+  vector<shared_ptr<Person>> persons = loadData(filename);
+
+  shared_ptr<Person> p;
+
+  p = make_shared<Student>();
   cout << "\n--- Enter Student Details ---\n";
-  s.input();
 
-  students.push_back(s);
-  saveData(students, filename);
-  cout << ">> Student saved successfully!\n";
+  p->inputAdd();
+  persons.push_back(p);
+  saveData(persons, filename);
+  cout << ">> " << p->getType() << " saved successfully!\n";
 }
 
-void DataManager::findStudent(const string &filename) {
-  vector<Student> students = loadData(filename);
-  cout << "\nEnter Student ID: ";
+void DataManager::removePerson(const string &filename) {
+  vector<shared_ptr<Person>> persons = loadData(filename);
+
+  cout << "\n--- Enter ID to remove ---\n";
   string id;
   cin >> id;
 
-  for (auto &s : students) {
-    if (Utils::toLowerCase(s.getId()) == Utils::toLowerCase(id)) {
-      cout << ">> Student Found:\n";
-      s.display();
-      return;
-    }
+  bool found = false;
+  auto it = remove_if(
+      persons.begin(), persons.end(), [&](const shared_ptr<Person> &p) {
+        return Utils::toLowerCase(p->getId()) == Utils::toLowerCase(id);
+      });
+
+  if (it != persons.end()) {
+    persons.erase(it, persons.end());
+    found = true;
   }
-  cout << ">> Not found student!\n";
+
+  if (found) {
+    saveData(persons, filename);
+    cout << ">> Person with ID " << id << " removed successfully!\n";
+  } else {
+    cout << ">> ID not found!\n";
+  }
 }
 
-void DataManager::updateStudent(const string &filename) {
-  vector<Student> students = loadData(filename);
-  cout << "\nEnter the ID of the student to update: ";
+// Find person
+void DataManager::findPerson(const string &filename) {
+  vector<shared_ptr<Person>> persons = loadData(filename);
+  cout << "\nEnter ID: ";
   string id;
   cin >> id;
 
-  for (auto &s : students) {
-    if (Utils::toUpperCase(s.getId()) == Utils::toUpperCase(id)) {
-      cout << "\n--- Update Student Information ---\n";
-      s.inputUpdate();
-      saveData(students, filename);
-      cout << ">> Student " << id << " Updated Successfully!\n";
+  for (const auto &p : persons) {
+    if (Utils::toLowerCase(p->getId()) == Utils::toLowerCase(id)) {
+      cout << ">> Found:\n";
+      p->display();
+      return;
+    }
+  }
+  cout << ">> Not found!\n";
+}
+
+void DataManager::updatePerson(const string &filename) {
+  vector<shared_ptr<Person>> persons = loadData(filename);
+  cout << "\nEnter the ID to update: ";
+  string id;
+  cin >> id;
+
+  for (auto &p : persons) {
+    if (Utils::toUpperCase(p->getId()) == Utils::toUpperCase(id)) {
+      cout << "\n--- Update " << p->getType() << " Information ---\n";
+      p->inputUpdate();
+      saveData(persons, filename);
+      cout << ">> " << p->getType() << " " << id << " Updated Successfully!\n";
       return;
     }
   }
 
-  cout << ">> Student ID Not Found!\n";
+  cout << ">> ID Not Found!\n";
 }
 
-void DataManager::displayAllStudents(const string &filename) {
-  vector<Student> students = loadData(filename);
+void DataManager::displayAll(const string &filename) {
+  vector<shared_ptr<Person>> persons = loadData(filename);
 
-  if (students.empty()) {
-    cout << ">> No students found!\n";
+  if (persons.empty()) {
+    cout << ">> No records found!\n";
     return;
   }
 
-  cout << "\n===== All Students =====\n";
-  for (const auto &s : students) {
-    s.display();
+  cout << "\n===== All Records =====\n";
+  for (const auto &p : persons) {
+    p->display();
   }
-  cout << "========================\n";
+  cout << "=======================\n";
+}
+
+void DataManager::addStudent(const string &filename) {
+  vector<shared_ptr<Person>> persons = loadData(filename);
+  auto s = make_shared<Student>();
+  cout << "\n--- Enter Student Details ---\n";
+  s->inputAdd();
+  persons.push_back(s);
+  saveData(persons, filename);
+  cout << ">> Student saved successfully!\n";
 }

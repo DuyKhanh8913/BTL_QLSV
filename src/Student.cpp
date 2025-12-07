@@ -4,10 +4,7 @@
 
 using namespace std;
 
-Student::Student(string id, string studentName, string className)
-    : id(id), studentName(studentName), className(className) {}
-
-void Student::input() {
+void Student::inputAdd() {
   cin.ignore();
   string tmp;
 
@@ -31,7 +28,7 @@ void Student::input() {
     else
       break;
   } while (true);
-  studentName = Utils::sanitizeName(tmp);
+  name = Utils::sanitizeName(tmp);
 
   cout << "Enter class: ";
   getline(cin, tmp);
@@ -53,13 +50,12 @@ void Student::inputUpdate() {
       cout << "Invalid ID! Keeping previous value.\n";
   }
 
-  cout << "Enter new student name (or press Enter to keep [" << studentName
-       << "]): ";
+  cout << "Enter new student name (or press Enter to keep [" << name << "]): ";
   getline(cin, tmp);
   tmp = Utils::trim(tmp);
   if (!tmp.empty()) {
     if (Utils::isValidName(tmp))
-      studentName = Utils::sanitizeName(tmp);
+      name = Utils::sanitizeName(tmp);
     else
       cout << "Invalid name! Keeping previous value.\n";
   }
@@ -73,28 +69,26 @@ void Student::inputUpdate() {
 }
 
 void Student::display() const {
-  cout << "ID: " << id << " | Name: " << studentName
+  cout << "[STUDENT] ID: " << id << " | Name: " << name
        << " | Class: " << className << endl;
 }
 
-string Student::getId() const { return id; }
-
 string Student::serialize() const {
-  return id + "|" + studentName + "|" + className;
+  return "STUDENT|" + id + "|" + name + "|" + className;
 }
 
 Student Student::deserialize(const string &line) {
   stringstream ss(line);
-  string id, studentName, className;
+  string type, id, name, className;
 
+  getline(ss, type, '|');
   getline(ss, id, '|');
-  getline(ss, studentName, '|');
+  getline(ss, name, '|');
   getline(ss, className, '|');
 
-  // Apply sanitization
   id = Utils::toUpperCase(id);
-  studentName = Utils::sanitizeName(studentName);
+  name = Utils::sanitizeName(name);
   className = Utils::toUpperCase(className);
 
-  return Student(id, studentName, className);
+  return Student(id, name, className);
 }

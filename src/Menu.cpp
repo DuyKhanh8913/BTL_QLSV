@@ -10,31 +10,32 @@ void Menu::run(const string &filename) {
 
   do {
     system("cls");
-    cout << "\n===== Student Manager MENU =====\n";
-    cout << "1. Add student\n";
-    cout << "2. Remove student\n";
-    cout << "3. Find student by ID\n";
-    cout << "4. Update student\n";
-    cout << "5. Display all students\n";
+    cout << "\n===== SCHOOL MANAGEMENT SYSTEM =====\n";
+    cout << "1. Add person (Student/Teacher)\n";
+    cout << "2. Remove person\n";
+    cout << "3. Find person by ID\n";
+    cout << "4. Update person\n";
+    cout << "5. Display students\n";
     cout << "0. Exit\n";
     cout << "Choose: ";
     cin >> choice;
 
     switch (choice) {
     case 1:
-      DataManager::addStudent(filename);
+      DataManager::addPerson(filename);
       break;
     case 2:
-      DataManager::removeStudent(filename);
+      DataManager::removePerson(filename);
       break;
     case 3:
-      DataManager::findStudent(filename);
+      DataManager::findPerson(filename);
       break;
     case 4:
-      DataManager::updateStudent(filename);
+      DataManager::updatePerson(filename);
       break;
     case 5:
-      DataManager::displayAllStudents(filename);
+      DataManager::displayAll(filename);
+      break;
       break;
     case 0:
       cout << "Exiting...\n";
