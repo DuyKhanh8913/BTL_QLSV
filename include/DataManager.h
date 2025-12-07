@@ -11,6 +11,7 @@ public:
   static void saveData(const vector<Student> &students, const string &filename);
 
   static void addStudent(const string &filename);
+  static void removeStudent(const string &filename);
   static void findStudent(const string &filename);
   static void updateStudent(const string &filename);
   static void displayAllStudents(const string &filename);
