@@ -7,6 +7,7 @@ A simple C++ console application to manage students: add, find, update, and disp
 - Add a new student (ID, name, class)
 - Find a student by ID
 - Update student info (partial updates allowed)
+- Delete student info (partial updates allowed)
 - Display all students
 - Input validation and sanitization
 - IDs and class names are automatically uppercase
@@ -121,3 +122,4 @@ QLSV.exe
 ## License
 
 This project is free to use and modify.
+
